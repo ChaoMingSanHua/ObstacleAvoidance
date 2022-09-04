@@ -1,0 +1,20 @@
+function [px, py] = ArcInterpolation(pc, p0, p1, s)
+vec_pcp0 = [p0 - pc];
+vec_pcp1 = [p1 - pc];
+radius = norm(vec_pcp0);
+theta = acos((dot(vec_pcp0, vec_pcp1)) / (norm(vec_pcp0) * norm(vec_pcp1)));
+vec_Cx = vec_pcp0 / norm(vec_pcp0);
+vec_Cz = cross(vec_pcp0, vec_pcp1);
+vec_Cz = vec_Cz / norm(vec_Cz);
+vec_Cy = cross(vec_Cz, vec_Cx);
+
+theta_s = s * theta;
+Cpx = radius * cos(theta_s);
+Cpy = radius * sin(theta_s);
+Cpz = 0;
+Cp = [Cpx; Cpy; Cpz; 1];
+T = eye(4);
+T(1:3, :) = [vec_Cx', vec_Cy', vec_Cz', pc'];
+p = T * Cp;
+px = p(1);
+py = p(2);
